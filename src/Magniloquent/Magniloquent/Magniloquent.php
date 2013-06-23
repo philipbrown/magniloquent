@@ -14,6 +14,8 @@ class Magniloquent extends Model {
 
   private $validationErrors;
 
+  private $passes = false;
+
   public function __construct($attributes = array())
   {
     parent::__construct($attributes);
@@ -80,7 +82,11 @@ class Magniloquent extends Model {
   {
     $validation = Validator::make($attributes, $this->rules);
 
-    if($validation->passes()) return true;
+    if($validation->passes())
+    {
+      $this->passes = true;
+      return true;
+    }
 
     $this->validationErrors = $validation->messages();
 
@@ -89,6 +95,11 @@ class Magniloquent extends Model {
 
   public function errors() {
     return $this->validationErrors;
+  }
+
+  public function passes()
+  {
+    return $this->passes;
   }
 
   /**
