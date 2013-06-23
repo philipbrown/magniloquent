@@ -26,10 +26,13 @@ class MagniloquentServiceProvider extends ServiceProvider {
 	 *
 	 * @return void
 	 */
-	public function register()
-	{
-		//
-	}
+  public function register()
+  {
+    $this->app['magniloquent'] = $this->app->share(function($app)
+    {
+      return new Magniloquent;
+    });
+  }
 
 	/**
 	 * Get the services provided by the provider.
