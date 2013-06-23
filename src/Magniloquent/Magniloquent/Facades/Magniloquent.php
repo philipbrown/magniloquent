@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Facade;
 
-class Supyo extends Facade {
+class Magniloquent extends Facade {
 
   /**
    * Get the registered name of the component.
