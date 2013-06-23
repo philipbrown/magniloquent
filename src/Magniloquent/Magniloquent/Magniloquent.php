@@ -87,7 +87,7 @@ class Magniloquent extends Model {
     return false;
   }
 
-  public function errors() {
+  public function getErrors() {
     return $this->validationErrors;
   }
 
