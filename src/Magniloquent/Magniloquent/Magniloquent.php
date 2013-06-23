@@ -1,4 +1,4 @@
-<?php
+<?php namespace Magniloquent\Magniloquent;
 
 use Illuminate\Support\MessageBag;
 
