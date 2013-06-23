@@ -32,6 +32,11 @@ class MagniloquentServiceProvider extends ServiceProvider {
     {
       return new Magniloquent;
     });
+    $this->app->booting(function()
+    {
+      $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+      $loader->alias('Magniloquent', 'Magniloquent\Magniloquent\Facades\Magniloquent');
+    });
   }
 
 	/**
