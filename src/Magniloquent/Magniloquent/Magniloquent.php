@@ -1,6 +1,12 @@
 <?php namespace Magniloquent\Magniloquent;
 
+use Closure;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Magniloquent extends Eloquent {
 
