@@ -1,0 +1,21 @@
+{
+    "name": "magniloquent/magniloquent",
+    "description": "",
+    "authors": [
+        {
+            "name": "Philip Brown",
+            "email": "phil@ipbrown.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x",
+        "illuminate/database": "4.0.x"
+    },
+    "autoload": {
+        "psr-0": {
+            "Magniloquent\\Magniloquent": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
