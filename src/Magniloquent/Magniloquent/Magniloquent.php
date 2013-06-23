@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Magniloquent extends Eloquent {
+class Magniloquent extends Model {
 
   private $rules = array();
 
