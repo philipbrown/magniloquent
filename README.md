@@ -9,7 +9,7 @@ This package is highly inspired by Ardent. I wanted to make some big changes and
 
 ##Installation
 
-Add `laravelbook/ardent` as a requirement to `composer.json`:
+Add `magniloquent/magniloquent` as a requirement to `composer.json`:
 
 ```javascript
 {
