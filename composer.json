@@ -1,6 +1,8 @@
 {
     "name": "magniloquent/magniloquent",
-    "description": "",
+    "description": "Self-validating models for Laravel 4's Eloquent",
+    "keywords": ["laravel", "eloquent"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Philip Brown",
