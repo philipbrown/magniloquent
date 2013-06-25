@@ -14,7 +14,7 @@ class Magniloquent extends Model {
 
   private $validationErrors;
 
-  private $passes = false;
+  private $saved = false;
 
   public function __construct($attributes = array())
   {
@@ -40,6 +40,8 @@ class Magniloquent extends Model {
 
     // Auto hash passwords
     $this->attributes = $this->autoHash();
+
+    $this->saved = true;
 
     return $this->performSave($options);
   }
@@ -82,11 +84,7 @@ class Magniloquent extends Model {
   {
     $validation = Validator::make($attributes, $this->rules);
 
-    if($validation->passes())
-    {
-      $this->passes = true;
-      return true;
-    }
+    if($validation->passes()) return true;
 
     $this->validationErrors = $validation->messages();
 
@@ -97,9 +95,9 @@ class Magniloquent extends Model {
     return $this->validationErrors;
   }
 
-  public function passes()
+  public function saved()
   {
-    return $this->passes;
+    return $this->saved;
   }
 
   /**
