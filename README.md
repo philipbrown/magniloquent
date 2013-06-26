@@ -60,7 +60,7 @@ The `save` array are validation rules that are applicable whenever the model is 
 
 So in the example above, when a user is created, the username should be unique. When the user updates any of their information, the uniqueness validation test won't be applied.
 
-##Controller example
+##Controller Example
 Here is an example `store` method:
 
 ```php
@@ -85,7 +85,9 @@ public function store()
 }
 ```
 **First** Use Laravel's create method and send in the `Input::all()`. Save the return value into a variable.
+
 **Second** Determine whether the model saved corrected using the `saved()` method.
+
 **Third** Return the validation errors using the `error()` method.
 
 The returned errors use Laravel's [MessageBag](http://laravel.com/docs/validation#error-messages-and-views).
