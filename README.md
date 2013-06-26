@@ -88,6 +88,6 @@ public function store()
 
 **Second** Determine whether the model saved corrected using the `saved()` method.
 
-**Third** Return the validation errors using the `error()` method.
+**Third** Return the validation errors using the `errors()` method.
 
 The returned errors use Laravel's [MessageBag](http://laravel.com/docs/validation#error-messages-and-views).
