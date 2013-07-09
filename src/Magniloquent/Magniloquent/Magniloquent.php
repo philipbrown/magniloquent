@@ -32,6 +32,8 @@ class Magniloquent extends Model {
     // Merge the rules arrays into one array
     $this->rules = $this->mergeRules();
 
+    if(!empty($options)) $this->hydrate($options);
+
     // If the validation failed, return false
     if(!$this->validate($this->attributes)) return false;
 
@@ -44,6 +46,15 @@ class Magniloquent extends Model {
     $this->saved = true;
 
     return $this->performSave($options);
+  }
+
+  private function hydrate($attributes)
+  {
+    $attributes = array_intersect_key($attributes, $this->rules);
+    foreach($attributes as $key => $value)
+    {
+      $this->setAttribute($key, $value);
+    }
   }
 
   private function performSave(array $options = array())
