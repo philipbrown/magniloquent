@@ -59,6 +59,7 @@ class Magniloquent extends Model {
   private function mergeRules()
   {
     $rules = static::$rules;
+    $output = array();
 
     if($this->exists){
       $merged = array_merge_recursive($rules['save'], $rules['update']);
@@ -95,7 +96,7 @@ class Magniloquent extends Model {
     return $this->validationErrors;
   }
 
-  public function saved()
+  public function isSaved()
   {
     return $this->saved;
   }
@@ -107,6 +108,7 @@ class Magniloquent extends Model {
    */
   private function purgeRedundant($attributes)
   {
+    $clean = array();
     foreach($attributes as $key => $value){
       if(!Str::endsWith( $key, '_confirmation')){
         $clean[$key] = $value;
