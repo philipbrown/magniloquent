@@ -20,9 +20,6 @@ class Magniloquent extends Model {
   {
     parent::__construct($attributes);
     $this->validationErrors = new MessageBag;
-
-    // Merge the rules arrays into one array
-    $this->rules = $this->mergeRules();
   }
 
   /**
@@ -94,6 +91,9 @@ class Magniloquent extends Model {
    */
   public function validate($attributes)
   {
+    // Merge the rules arrays into one array
+    $this->rules = $this->mergeRules();
+
     $validation = Validator::make($attributes, $this->rules);
 
     if($validation->passes()) return true;
