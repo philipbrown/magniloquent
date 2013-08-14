@@ -47,11 +47,7 @@ class Magniloquent extends Model {
 
   private function hydrate($attributes)
   {
-    $attributes = array_intersect_key($attributes, $this->rules);
-    foreach($attributes as $key => $value)
-    {
-      $this->setAttribute($key, $value);
-    }
+    $this->fill($attributes);
   }
 
   private function performSave(array $options = array())
