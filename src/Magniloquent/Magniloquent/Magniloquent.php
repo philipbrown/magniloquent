@@ -16,7 +16,7 @@ class Magniloquent extends Model {
 
   private $saved = false;
 
-  protected $customMessages = [];
+  protected $customMessages = array();
 
   public function __construct($attributes = array())
   {
