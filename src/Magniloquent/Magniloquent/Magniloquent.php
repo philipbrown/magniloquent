@@ -16,6 +16,8 @@ class Magniloquent extends Model {
 
   private $saved = false;
 
+  protected $customMessages = [];
+
   public function __construct($attributes = array())
   {
     parent::__construct($attributes);
@@ -90,7 +92,7 @@ class Magniloquent extends Model {
     // Merge the rules arrays into one array
     $this->rules = $this->mergeRules();
 
-    $validation = Validator::make($attributes, $this->rules);
+    $validation = Validator::make($attributes, $this->rules, $this->customMessages);
 
     if($validation->passes()) return true;
 
