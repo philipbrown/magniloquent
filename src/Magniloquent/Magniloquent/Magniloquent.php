@@ -16,6 +16,8 @@ class Magniloquent extends Model {
 
   private $saved = false;
 
+  private $valid = false;
+
   protected $customMessages = array();
 
   public function __construct($attributes = array())
@@ -94,7 +96,10 @@ class Magniloquent extends Model {
 
     $validation = Validator::make($attributes, $this->rules, $this->customMessages);
 
-    if($validation->passes()) return true;
+    if($validation->passes()){
+      $this->valid = true;
+      return true;
+    }
 
     $this->validationErrors = $validation->messages();
 
@@ -108,6 +113,11 @@ class Magniloquent extends Model {
   public function isSaved()
   {
     return $this->saved;
+  }
+
+  public function isValid()
+  {
+    return $this->valid;
   }
 
   /**
