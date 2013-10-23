@@ -12,7 +12,7 @@ Magniloquent was extracted from [Cribbb](https://github.com/cribbb/cribbb).
 ##Installation
 Add `magniloquent/magniloquent` as a requirement to `composer.json`:
 
-```javascript
+```json
 {
   "require": {
     "magniloquent/magniloquent": "dev-master"
