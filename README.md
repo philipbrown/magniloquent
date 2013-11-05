@@ -73,7 +73,7 @@ public function store()
 {
   $s = User::create(Input::all());
 
-  if($s->saved())
+  if($s->isSaved())
   {
     return Redirect::route('users.index')
       ->with('flash', 'The new user has been created');
