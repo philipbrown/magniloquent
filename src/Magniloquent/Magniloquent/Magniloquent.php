@@ -10,13 +10,17 @@ use Illuminate\Support\Str;
 
 class Magniloquent extends Model {
 
-  private $rules = array();
+  protected static $rules = array(
+      'save' => array(),
+      'create' => array(),
+      'update' => array()
+  );
 
-  private $validationErrors;
+  protected $validationErrors;
 
-  private $saved = false;
+  protected $saved = false;
 
-  private $valid = false;
+  protected $valid = false;
 
   protected $customMessages = array();
 
