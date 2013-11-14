@@ -8,16 +8,37 @@ use Illuminate\Support\Str;
 
 class Magniloquent extends Model {
 
+    /**
+     * @var array The rules used to validate the model
+     */
     private $rules = array();
 
+    /**
+     * @var \Illuminate\Support\MessageBag The errors generated if validation fails
+     */
     private $validationErrors;
 
+    /**
+     * @var bool Designates if the model has been saved
+     */
     private $saved = false;
 
+    /**
+     * @var bool Designates if the model is valid after validation
+     */
     private $valid = false;
 
+    /**
+     * @var array Custom messages when model doesn't pass validation
+     */
     protected $customMessages = array();
 
+    /**
+     * The constructor of the model. Takes optional array of attributes.
+     * Also, it sets validationErrors to be an empty MessageBag instance.
+     *
+     * @param array $attributes The attributes of the model to set at instantiation
+     */
     public function __construct($attributes = array())
     {
         parent::__construct($attributes);
@@ -25,9 +46,14 @@ class Magniloquent extends Model {
     }
 
     /**
-     * Save
+     * Save the model to the database. Hydrates, validates, purges redundant attributes
+     * auto-hashes the password, and performs the save.
      *
-     * Prepare before the Model is actually saved
+     * @param array $options The attributes to add to the model before validation and saving
+     *
+     * @return bool
+     *
+     * TODO: Add $touch parameter to pass to performSave to prevent 'touch' error
      */
     public function save(array $options = array())
     {
@@ -51,20 +77,35 @@ class Magniloquent extends Model {
         return $this->performSave($options);
     }
 
+    /**
+     * Adds attributes to the model
+     *
+     * @param array $attributes The attributes to add to the model
+     *
+     * TODO: Remove since not necessary?
+     */
     private function hydrate($attributes)
     {
         $this->fill($attributes);
     }
 
+    /**
+     * Save the model using Eloquent's save method
+     *
+     * @param array $options
+     *
+     * @return bool
+     */
     private function performSave(array $options = array())
     {
         return parent::save($options);
     }
 
     /**
-     * Merge Rules
+     * Merges saving validation rules in with create and update rules
+     * to allow rules to differ on create and update.
      *
-     * Merge the rules arrays to form one set of rules
+     * @return array
      */
     private function mergeRules()
     {
@@ -87,9 +128,12 @@ class Magniloquent extends Model {
     }
 
     /**
-     * Validate
+     * Performs validation on the model and return whether it
+     * passed or failed
      *
-     * Validate input against merged rules
+     * @param array $attributes The attributes to be validated
+     *
+     * @return bool
      */
     public function validate($attributes)
     {
@@ -108,25 +152,43 @@ class Magniloquent extends Model {
         return false;
     }
 
+    /**
+     * Returns validationErrors MessageBag
+     *
+     * @return MessageBag
+     */
     public function errors()
     {
         return $this->validationErrors;
     }
 
+    /**
+     * Returns if model has been saved to the database
+     *
+     * @return bool
+     */
     public function isSaved()
     {
         return $this->saved;
     }
 
+    /**
+     * Returns if the model has passed validation
+     *
+     * @return bool
+     */
     public function isValid()
     {
         return $this->valid;
     }
 
     /**
-     * Purge Redundant fields
+     * Purges redundant fields by getting rid of all attributes
+     * ending in '_confirmation'
      *
-     * Get rid of '_confirmation' fields
+     * @param $attributes
+     *
+     * @return array
      */
     private function purgeRedundant($attributes)
     {
@@ -140,9 +202,9 @@ class Magniloquent extends Model {
     }
 
     /**
-     * Auto hash
+     * Auto-hashes the password parameter if it exists
      *
-     * Auto hash passwords
+     * @return array
      */
     private function autoHash()
     {
