@@ -66,8 +66,8 @@ class Magniloquent extends Model {
             return false;
         }
 
-        // Purge Redundant fields
-        $this->attributes = $this->purgeRedundant($this->attributes);
+        // Purge unnecessary fields
+        $this->attributes = $this->purgeUnneeded($this->attributes);
 
         // Auto hash passwords
         $this->attributes = $this->autoHash();
@@ -183,18 +183,18 @@ class Magniloquent extends Model {
     }
 
     /**
-     * Purges redundant fields by getting rid of all attributes
-     * ending in '_confirmation'
+     * Purges unneeded fields by getting rid of all attributes
+     * ending in '_confirmation' or starting with '_'
      *
      * @param $attributes
      *
      * @return array
      */
-    private function purgeRedundant($attributes)
+    private function purgeUnneeded($attributes)
     {
         $clean = array();
         foreach ($attributes as $key => $value) {
-            if (!Str::endsWith($key, '_confirmation')) {
+            if (!Str::endsWith($key, '_confirmation') && !Str::startsWith($key, '_')) {
                 $clean[$key] = $value;
             }
         }
