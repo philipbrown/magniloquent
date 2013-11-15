@@ -34,10 +34,11 @@ class Magniloquent extends Model {
    * Save
    *
    * Prepare before the Model is actually saved
+   * @param bool $touch The option to touch timestamps with all parent models
    */
-  public function save(array $options = array())
+    public function save(array $new_attributes = array(), $touch = true)
   {
-    if(!empty($options)) $this->hydrate($options);
+    if(!empty($new_attributes)) $this->hydrate($new_attributes);
 
     // If the validation failed, return false
     if(!$this->validate($this->attributes)) return false;
@@ -50,7 +51,7 @@ class Magniloquent extends Model {
 
     $this->saved = true;
 
-    return $this->performSave($options);
+    return $this->performSave(array('touch' => $touch));
   }
 
   private function hydrate($attributes)
