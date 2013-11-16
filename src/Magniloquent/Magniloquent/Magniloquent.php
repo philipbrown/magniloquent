@@ -11,22 +11,22 @@ class Magniloquent extends Model {
     /**
      * @var array The rules used to validate the model
      */
-    private $rules = array();
+    protected $rules = array();
 
     /**
      * @var \Illuminate\Support\MessageBag The errors generated if validation fails
      */
-    private $validationErrors;
+    protected $validationErrors;
 
     /**
      * @var bool Designates if the model has been saved
      */
-    private $saved = false;
+    protected $saved = false;
 
     /**
      * @var bool Designates if the model is valid after validation
      */
-    private $valid = false;
+    protected $valid = false;
 
     /**
      * @var array Custom messages when model doesn't pass validation
