@@ -46,20 +46,14 @@ class Magniloquent extends Model {
     }
 
     /**
-     * Save the model to the database. Hydrates, validates, purges redundant attributes
-     * auto-hashes the password, and performs the save.
+     * Save
      *
-     * @param array $options The attributes to add to the model before validation and saving
-     *
-     * @return bool
-     *
-     * TODO: Add $touch parameter to pass to performSave to prevent 'touch' error
+     * Prepare before the Model is actually saved
+     * @param bool $touch The option to touch timestamps with all parent models
      */
-    public function save(array $options = array())
+    public function save(array $new_attributes = array(), $touch = true)
     {
-        if (!empty($options)) {
-            $this->hydrate($options);
-        }
+        if(!empty($new_attributes)) $this->hydrate($new_attributes);
 
         // If the validation failed, return false
         if (!$this->validate($this->attributes)) {
@@ -74,7 +68,7 @@ class Magniloquent extends Model {
 
         $this->saved = true;
 
-        return $this->performSave($options);
+        return $this->performSave(array('touch' => $touch));
     }
 
     /**
@@ -126,94 +120,4 @@ class Magniloquent extends Model {
         }
         return $output;
     }
-
-    /**
-     * Performs validation on the model and return whether it
-     * passed or failed
-     *
-     * @param array $attributes The attributes to be validated
-     *
-     * @return bool
-     */
-    public function validate($attributes)
-    {
-        // Merge the rules arrays into one array
-        $this->rules = $this->mergeRules();
-
-        $validation = Validator::make($attributes, $this->rules, $this->customMessages);
-
-        if ($validation->passes()) {
-            $this->valid = true;
-            return true;
-        }
-
-        $this->validationErrors = $validation->messages();
-
-        return false;
-    }
-
-    /**
-     * Returns validationErrors MessageBag
-     *
-     * @return MessageBag
-     */
-    public function errors()
-    {
-        return $this->validationErrors;
-    }
-
-    /**
-     * Returns if model has been saved to the database
-     *
-     * @return bool
-     */
-    public function isSaved()
-    {
-        return $this->saved;
-    }
-
-    /**
-     * Returns if the model has passed validation
-     *
-     * @return bool
-     */
-    public function isValid()
-    {
-        return $this->valid;
-    }
-
-    /**
-     * Purges redundant fields by getting rid of all attributes
-     * ending in '_confirmation'
-     *
-     * @param $attributes
-     *
-     * @return array
-     */
-    private function purgeRedundant($attributes)
-    {
-        $clean = array();
-        foreach ($attributes as $key => $value) {
-            if (!Str::endsWith($key, '_confirmation')) {
-                $clean[$key] = $value;
-            }
-        }
-        return $clean;
-    }
-
-    /**
-     * Auto-hashes the password parameter if it exists
-     *
-     * @return array
-     */
-    private function autoHash()
-    {
-        if (isset($this->attributes['password'])) {
-            if ($this->attributes['password'] != $this->getOriginal('password')) {
-                $this->attributes['password'] = Hash::make($this->attributes['password']);
-            }
-        }
-        return $this->attributes;
-    }
-
 }
