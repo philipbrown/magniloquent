@@ -60,8 +60,8 @@ class Magniloquent extends Model {
             return false;
         }
 
-        // Purge Redundant fields
-        $this->attributes = $this->purgeRedundant($this->attributes);
+        // Purge unnecessary fields
+        $this->attributes = $this->purgeUnneeded($this->attributes);
 
         // Auto hash passwords
         $this->attributes = $this->autoHash();
@@ -120,4 +120,94 @@ class Magniloquent extends Model {
         }
         return $output;
     }
+
+    /**
+     * Performs validation on the model and return whether it
+     * passed or failed
+     *
+     * @param array $attributes The attributes to be validated
+     *
+     * @return bool
+     */
+    public function validate($attributes)
+    {
+        // Merge the rules arrays into one array
+        $this->rules = $this->mergeRules();
+
+        $validation = Validator::make($attributes, $this->rules, $this->customMessages);
+
+        if ($validation->passes()) {
+            $this->valid = true;
+            return true;
+        }
+
+        $this->validationErrors = $validation->messages();
+
+        return false;
+    }
+
+    /**
+     * Returns validationErrors MessageBag
+     *
+     * @return MessageBag
+     */
+    public function errors()
+    {
+        return $this->validationErrors;
+    }
+
+    /**
+     * Returns if model has been saved to the database
+     *
+     * @return bool
+     */
+    public function isSaved()
+    {
+        return $this->saved;
+    }
+
+    /**
+     * Returns if the model has passed validation
+     *
+     * @return bool
+     */
+    public function isValid()
+    {
+        return $this->valid;
+    }
+
+    /**
+     * Purges unneeded fields by getting rid of all attributes
+     * ending in '_confirmation' or starting with '_'
+     *
+     * @param $attributes
+     *
+     * @return array
+     */
+    private function purgeUnneeded($attributes)
+    {
+        $clean = array();
+        foreach ($attributes as $key => $value) {
+            if (!Str::endsWith($key, '_confirmation') && !Str::startsWith($key, '_')) {
+                $clean[$key] = $value;
+            }
+        }
+        return $clean;
+    }
+
+    /**
+     * Auto-hashes the password parameter if it exists
+     *
+     * @return array
+     */
+    private function autoHash()
+    {
+        if (isset($this->attributes['password'])) {
+            if ($this->attributes['password'] != $this->getOriginal('password')) {
+                $this->attributes['password'] = Hash::make($this->attributes['password']);
+            }
+        }
+        return $this->attributes;
+    }
+
 }
