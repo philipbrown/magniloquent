@@ -1,159 +1,219 @@
 <?php namespace Magniloquent\Magniloquent;
 
-use Closure;
-use Illuminate\Support\MessageBag;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
 class Magniloquent extends Model {
 
-  protected static $rules = array(
-      'save' => array(),
-      'create' => array(),
-      'update' => array()
-  );
+    /**
+     * @var array The rules used to validate the model
+     */
+    private $rules = array();
 
-  protected $validationErrors;
+    /**
+     * @var \Illuminate\Support\MessageBag The errors generated if validation fails
+     */
+    private $validationErrors;
 
-  protected $saved = false;
+    /**
+     * @var bool Designates if the model has been saved
+     */
+    private $saved = false;
 
-  protected $valid = false;
+    /**
+     * @var bool Designates if the model is valid after validation
+     */
+    private $valid = false;
 
-  protected $customMessages = array();
+    /**
+     * @var array Custom messages when model doesn't pass validation
+     */
+    protected $customMessages = array();
 
-  public function __construct($attributes = array())
-  {
-    parent::__construct($attributes);
-    $this->validationErrors = new MessageBag;
-  }
-
-  /**
-   * Save
-   *
-   * Prepare before the Model is actually saved
-   */
-  public function save(array $options = array())
-  {
-    if(!empty($options)) $this->hydrate($options);
-
-    // If the validation failed, return false
-    if(!$this->validate($this->attributes)) return false;
-
-    // Purge Redundant fields
-    $this->attributes = $this->purgeRedundant($this->attributes);
-
-    // Auto hash passwords
-    $this->attributes = $this->autoHash();
-
-    $this->saved = true;
-
-    return $this->performSave($options);
-  }
-
-  private function hydrate($attributes)
-  {
-    $this->fill($attributes);
-  }
-
-  private function performSave(array $options = array())
-  {
-    return parent::save($options);
-  }
-
-  /**
-   * Merge Rules
-   *
-   * Merge the rules arrays to form one set of rules
-   */
-  private function mergeRules()
-  {
-    $rules = static::$rules;
-    $output = array();
-
-    if($this->exists){
-      $merged = array_merge_recursive($rules['save'], $rules['update']);
-    }else{
-      $merged = array_merge_recursive($rules['save'], $rules['create']);
-    }
-    foreach($merged as $field => $rules){
-      if(is_array($rules)){
-        $output[$field] = implode("|", $rules);
-      }else{
-        $output[$field] = $rules;
-      }
-    }
-    return $output;
-  }
-
-  /**
-   * Validate
-   *
-   * Validate input against merged rules
-   */
-  public function validate($attributes)
-  {
-    // Merge the rules arrays into one array
-    $this->rules = $this->mergeRules();
-
-    $validation = Validator::make($attributes, $this->rules, $this->customMessages);
-
-    if($validation->passes()){
-      $this->valid = true;
-      return true;
-    }
-
-    $this->validationErrors = $validation->messages();
-
-    return false;
-  }
-
-  public function errors() {
-    return $this->validationErrors;
-  }
-
-  public function isSaved()
-  {
-    return $this->saved;
-  }
-
-  public function isValid()
-  {
-    return $this->valid;
-  }
-
-  /**
-   * Purge Redundant fields
-   *
-   * Get rid of '_confirmation' fields
-   */
-  private function purgeRedundant($attributes)
-  {
-    $clean = array();
-    foreach($attributes as $key => $value){
-      if(!Str::endsWith( $key, '_confirmation')){
-        $clean[$key] = $value;
-      }
-    }
-    return $clean;
-  }
-
-  /**
-   * Auto hash
-   *
-   * Auto hash passwords
-   */
-  private function autoHash()
-  {
-    if(isset($this->attributes['password']))
+    /**
+     * The constructor of the model. Takes optional array of attributes.
+     * Also, it sets validationErrors to be an empty MessageBag instance.
+     *
+     * @param array $attributes The attributes of the model to set at instantiation
+     */
+    public function __construct($attributes = array())
     {
-      if($this->attributes['password'] != $this->getOriginal('password')){
-        $this->attributes['password'] = Hash::make($this->attributes['password']);
-      }
+        parent::__construct($attributes);
+        $this->validationErrors = new MessageBag;
     }
-    return $this->attributes;
-  }
+
+    /**
+     * Save the model to the database. Hydrates, validates, purges redundant attributes
+     * auto-hashes the password, and performs the save.
+     *
+     * @param array $options The attributes to add to the model before validation and saving
+     *
+     * @return bool
+     *
+     * TODO: Add $touch parameter to pass to performSave to prevent 'touch' error
+     */
+    public function save(array $options = array())
+    {
+        if (!empty($options)) {
+            $this->hydrate($options);
+        }
+
+        // If the validation failed, return false
+        if (!$this->validate($this->attributes)) {
+            return false;
+        }
+
+        // Purge Redundant fields
+        $this->attributes = $this->purgeRedundant($this->attributes);
+
+        // Auto hash passwords
+        $this->attributes = $this->autoHash();
+
+        $this->saved = true;
+
+        return $this->performSave($options);
+    }
+
+    /**
+     * Adds attributes to the model
+     *
+     * @param array $attributes The attributes to add to the model
+     *
+     * TODO: Remove since not necessary?
+     */
+    private function hydrate($attributes)
+    {
+        $this->fill($attributes);
+    }
+
+    /**
+     * Save the model using Eloquent's save method
+     *
+     * @param array $options
+     *
+     * @return bool
+     */
+    private function performSave(array $options = array())
+    {
+        return parent::save($options);
+    }
+
+    /**
+     * Merges saving validation rules in with create and update rules
+     * to allow rules to differ on create and update.
+     *
+     * @return array
+     */
+    private function mergeRules()
+    {
+        $rules = static::$rules;
+        $output = array();
+
+        if ($this->exists) {
+            $merged = array_merge_recursive($rules['save'], $rules['update']);
+        } else {
+            $merged = array_merge_recursive($rules['save'], $rules['create']);
+        }
+        foreach ($merged as $field => $rules) {
+            if (is_array($rules)) {
+                $output[$field] = implode("|", $rules);
+            } else {
+                $output[$field] = $rules;
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Performs validation on the model and return whether it
+     * passed or failed
+     *
+     * @param array $attributes The attributes to be validated
+     *
+     * @return bool
+     */
+    public function validate($attributes)
+    {
+        // Merge the rules arrays into one array
+        $this->rules = $this->mergeRules();
+
+        $validation = Validator::make($attributes, $this->rules, $this->customMessages);
+
+        if ($validation->passes()) {
+            $this->valid = true;
+            return true;
+        }
+
+        $this->validationErrors = $validation->messages();
+
+        return false;
+    }
+
+    /**
+     * Returns validationErrors MessageBag
+     *
+     * @return MessageBag
+     */
+    public function errors()
+    {
+        return $this->validationErrors;
+    }
+
+    /**
+     * Returns if model has been saved to the database
+     *
+     * @return bool
+     */
+    public function isSaved()
+    {
+        return $this->saved;
+    }
+
+    /**
+     * Returns if the model has passed validation
+     *
+     * @return bool
+     */
+    public function isValid()
+    {
+        return $this->valid;
+    }
+
+    /**
+     * Purges redundant fields by getting rid of all attributes
+     * ending in '_confirmation'
+     *
+     * @param $attributes
+     *
+     * @return array
+     */
+    private function purgeRedundant($attributes)
+    {
+        $clean = array();
+        foreach ($attributes as $key => $value) {
+            if (!Str::endsWith($key, '_confirmation')) {
+                $clean[$key] = $value;
+            }
+        }
+        return $clean;
+    }
+
+    /**
+     * Auto-hashes the password parameter if it exists
+     *
+     * @return array
+     */
+    private function autoHash()
+    {
+        if (isset($this->attributes['password'])) {
+            if ($this->attributes['password'] != $this->getOriginal('password')) {
+                $this->attributes['password'] = Hash::make($this->attributes['password']);
+            }
+        }
+        return $this->attributes;
+    }
 
 }
