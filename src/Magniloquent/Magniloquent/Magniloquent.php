@@ -61,12 +61,12 @@ class Magniloquent extends Model {
      */
     public function save(array $new_attributes = array(), $touch = true)
     {
-        if(!empty($new_attributes)) $this->fill($new_attributes);
+        if(!empty($new_attributes))
+            $this->hydrate($new_attributes);
 
         // If the validation failed, return false
-        if (!$this->validate($this->attributes)) {
+        if (!$this->valid && !$this->validate($this->attributes))
             return false;
-        }
 
         // Purge unnecessary fields
         $this->purgeUnneeded($this->attributes);
