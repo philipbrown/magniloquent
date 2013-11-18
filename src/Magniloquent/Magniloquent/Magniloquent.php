@@ -76,19 +76,7 @@ class Magniloquent extends Model {
 
         $this->saved = true;
 
-        return $this->performSave(array('touch' => $touch));
-    }
-
-    /**
-     * Save the model using Eloquent's save method
-     *
-     * @param array $options
-     *
-     * @return bool
-     */
-    private function performSave(array $options = array())
-    {
-        return parent::save($options);
+        return parent::save(array('touch' => $touch));
     }
 
     /**
