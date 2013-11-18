@@ -53,7 +53,7 @@ class Magniloquent extends Model {
      */
     public function save(array $new_attributes = array(), $touch = true)
     {
-        if(!empty($new_attributes)) $this->hydrate($new_attributes);
+        if(!empty($new_attributes)) $this->fill($new_attributes);
 
         // If the validation failed, return false
         if (!$this->validate($this->attributes)) {
@@ -69,18 +69,6 @@ class Magniloquent extends Model {
         $this->saved = true;
 
         return $this->performSave(array('touch' => $touch));
-    }
-
-    /**
-     * Adds attributes to the model
-     *
-     * @param array $attributes The attributes to add to the model
-     *
-     * TODO: Remove since not necessary?
-     */
-    private function hydrate($attributes)
-    {
-        $this->fill($attributes);
     }
 
     /**
