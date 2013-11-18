@@ -69,7 +69,7 @@ class Magniloquent extends Model {
             return false;
 
         // Purge unnecessary fields
-        $this->purgeUnneeded($this->attributes);
+        $this->purgeUnneeded();
 
         // Auto hash passwords
         $this->autoHash();
@@ -168,10 +168,10 @@ class Magniloquent extends Model {
      *
      * @return array
      */
-    private function purgeUnneeded($attributes)
+    private function purgeUnneeded()
     {
         $clean = array();
-        foreach ($attributes as $key => $value) {
+        foreach ($this->attributes as $key => $value) {
             if (!Str::endsWith($key, '_confirmation') && !Str::startsWith($key, '_')) {
                 $clean[$key] = $value;
             }
