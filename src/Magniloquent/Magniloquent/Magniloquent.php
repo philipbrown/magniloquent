@@ -61,10 +61,10 @@ class Magniloquent extends Model {
         }
 
         // Purge unnecessary fields
-        $this->attributes = $this->purgeUnneeded($this->attributes);
+        $this->purgeUnneeded($this->attributes);
 
         // Auto hash passwords
-        $this->attributes = $this->autoHash();
+        $this->autoHash();
 
         $this->saved = true;
 
@@ -192,7 +192,7 @@ class Magniloquent extends Model {
                 $clean[$key] = $value;
             }
         }
-        return $clean;
+        $this->attributes = $clean;
     }
 
     /**
@@ -207,7 +207,6 @@ class Magniloquent extends Model {
                 $this->attributes['password'] = Hash::make($this->attributes['password']);
             }
         }
-        return $this->attributes;
     }
 
 }
