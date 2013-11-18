@@ -11,7 +11,11 @@ class Magniloquent extends Model {
     /**
      * @var array The rules used to validate the model
      */
-    protected $rules = array();
+    protected static $rules = array(
+        'save' => array(),
+        'create' => array(),
+        'update' => array()
+    );
 
     /**
      * @var \Illuminate\Support\MessageBag The errors generated if validation fails
@@ -132,9 +136,9 @@ class Magniloquent extends Model {
     public function validate($attributes)
     {
         // Merge the rules arrays into one array
-        $this->rules = $this->mergeRules();
+        static::$rules = $this->mergeRules();
 
-        $validation = Validator::make($attributes, $this->rules, $this->customMessages);
+        $validation = Validator::make($attributes, static::$rules, $this->customMessages);
 
         if ($validation->passes()) {
             $this->valid = true;
