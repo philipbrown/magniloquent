@@ -68,7 +68,7 @@ class Magniloquent extends Model {
 
         $this->saved = true;
 
-        return $this->performSave(array('touch' => $touch));
+        return parent::save(array('touch' => $touch));
     }
 
     /**
@@ -81,18 +81,6 @@ class Magniloquent extends Model {
     private function hydrate($attributes)
     {
         $this->fill($attributes);
-    }
-
-    /**
-     * Save the model using Eloquent's save method
-     *
-     * @param array $options
-     *
-     * @return bool
-     */
-    private function performSave(array $options = array())
-    {
-        return parent::save($options);
     }
 
     /**
