@@ -62,10 +62,10 @@ class Magniloquent extends Model {
     public function save(array $new_attributes = array(), $touch = true)
     {
         if(!empty($new_attributes))
-            $this->hydrate($new_attributes);
+            $this->fill($new_attributes);
 
         // If the validation failed, return false
-        if (!$this->valid && !$this->validate($this->attributes))
+        if (!$this->valid && !$this->validate())
             return false;
 
         // Purge unnecessary fields
@@ -113,12 +113,12 @@ class Magniloquent extends Model {
      *
      * @return bool
      */
-    public function validate($attributes)
+    public function validate()
     {
         // Merge the rules arrays into one array
         $this->mergeRules();
 
-        $validation = Validator::make($attributes, $this->mergedRules, $this->customMessages);
+        $validation = Validator::make($this->attributes, $this->mergedRules, $this->customMessages);
 
         if ($validation->passes()) {
             $this->valid = true;
