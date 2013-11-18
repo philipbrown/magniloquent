@@ -14,6 +14,11 @@ class Magniloquent extends Model {
     protected $rules = array();
 
     /**
+     * @var array The merged rules created when validating
+     */
+    protected $mergedRules = array();
+
+    /**
      * @var \Illuminate\Support\MessageBag The errors generated if validation fails
      */
     protected $validationErrors;
@@ -118,7 +123,7 @@ class Magniloquent extends Model {
                 $output[$field] = $rules;
             }
         }
-        return $output;
+        $this->mergedRules = $output;
     }
 
     /**
@@ -132,9 +137,9 @@ class Magniloquent extends Model {
     public function validate($attributes)
     {
         // Merge the rules arrays into one array
-        $this->rules = $this->mergeRules();
+        $this->mergeRules();
 
-        $validation = Validator::make($attributes, $this->rules, $this->customMessages);
+        $validation = Validator::make($attributes, $this->mergedRules, $this->customMessages);
 
         if ($validation->passes()) {
             $this->valid = true;
@@ -208,6 +213,19 @@ class Magniloquent extends Model {
             }
         }
         return $this->attributes;
+    }
+
+    /**
+     * Set a given attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function setAttribute($key, $value)
+    {
+        if ($this->valid) $this->valid = false;
+        return parent::setAttribute($key, $value);
     }
 
 }
