@@ -50,9 +50,8 @@ class Magniloquent extends Model {
     }
 
     /**
-     * Save
-     *
      * Prepare before the Model is actually saved
+     * 
      * @param bool $touch The option to touch timestamps with all parent models
      */
     public function save(array $new_attributes = array(), $touch = true)
