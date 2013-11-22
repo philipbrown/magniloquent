@@ -58,18 +58,21 @@ class Magniloquent extends Model {
      * Prepare before the Model is actually saved
      *
      * @param array $new_attributes New attributes to fill onto the model before saving
+     * @param bool $forceSave Whether to validate or not. Defaults to validating before saving
      * @param bool  $touch The option to touch timestamps with all parent models
      *
      * @return bool
      */
-    public function save(array $new_attributes = array(), $touch = true)
+    public function save(array $new_attributes = array(), $forceSave = false, $touch = true)
     {
         if(!empty($new_attributes))
             $this->fill($new_attributes);
 
-        // If the validation failed, return false
-        if (!$this->valid && !$this->validate())
-            return false;
+        if (!$forceSave) {
+            // If the validation failed, return false
+            if (!$this->valid && !$this->validate())
+                return false;
+        }
 
         // Purge unnecessary fields
         $this->purgeUnneeded();
