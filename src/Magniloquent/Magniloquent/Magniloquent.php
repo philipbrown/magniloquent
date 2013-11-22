@@ -56,8 +56,11 @@ class Magniloquent extends Model {
 
     /**
      * Prepare before the Model is actually saved
-     * 
-     * @param bool $touch The option to touch timestamps with all parent models
+     *
+     * @param array $new_attributes New attributes to fill onto the model before saving
+     * @param bool  $touch The option to touch timestamps with all parent models
+     *
+     * @return bool
      */
     public function save(array $new_attributes = array(), $touch = true)
     {
@@ -108,8 +111,6 @@ class Magniloquent extends Model {
     /**
      * Performs validation on the model and return whether it
      * passed or failed
-     *
-     * @param array $attributes The attributes to be validated
      *
      * @return bool
      */
@@ -163,8 +164,6 @@ class Magniloquent extends Model {
     /**
      * Purges unneeded fields by getting rid of all attributes
      * ending in '_confirmation' or starting with '_'
-     *
-     * @param $attributes
      *
      * @return array
      */
