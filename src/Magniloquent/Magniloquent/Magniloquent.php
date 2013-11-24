@@ -18,6 +18,11 @@ class Magniloquent extends Model {
     );
 
     /**
+     * @var array The relationships this model has to other models
+     */
+    protected static $relationships = array();
+
+    /**
      * @var array The merged rules created when validating
      */
     protected $mergedRules = array();
@@ -52,6 +57,63 @@ class Magniloquent extends Model {
     {
         parent::__construct($attributes);
         $this->validationErrors = new MessageBag;
+    }
+
+    /**
+     * Handle dynamic method calls into the method.
+     *
+     * @param  string $method
+     * @param  array  $parameters
+     *
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        if (array_key_exists($method, static::$relationships)) {
+            return $this->callRelationships($method);
+        }
+
+        return parent::__call($method, $parameters);
+    }
+
+    /**
+     * Dynamically retrieve attributes on the model.
+     *
+     * @param  string $key
+     *
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        if (array_key_exists($key, static::$relationships)) {
+            $relation = $this->callRelationships($key);
+
+            return $relation->getResults();
+        }
+
+        return parent::__get($key);
+    }
+
+
+    /**
+     * Will call a relationship method as defined by the $relationships variable
+     * on the class.  $relationships is an array of arrays in the following form:
+     * array('hasOne', 'model', 'foreignKey')
+     * array('hasMany', 'model', 'foreignKey')
+     * array('belongsTo', 'model', 'foreignKey')
+     * array('belongsToMany', 'model', 'table_name', 'this_id', 'other_id')
+     *
+     * TODO: Add polymorphic relations
+     * @param $method
+     * @return mixed
+     */
+    protected function callRelationships($method)
+    {
+        $relation_params = static::$relationships[$method];
+
+        $relation_type = array_shift($relation_params);
+
+        return call_user_func_array(array($this, $relation_type), $relation_params);
     }
 
     /**
