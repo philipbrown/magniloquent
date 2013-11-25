@@ -75,8 +75,6 @@ class Athlete extends Magniloquent {
 }
 ```
 
-**Note: Polymorphic relationships are not supported in this format just yet.  They will be soon!**
-
 ##Controller Example
 Here is an example `store` method:
 
