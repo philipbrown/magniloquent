@@ -1,6 +1,7 @@
 <?php namespace Magniloquent\Magniloquent;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
@@ -122,6 +123,88 @@ class Magniloquent extends Model {
         $this->saved = true;
 
         return parent::save(array('touch' => $touch));
+    }
+
+    /**
+     * Define an inverse one-to-one or many relationship.
+     *
+     * @param  string $related
+     * @param  string $foreignKey
+     * @param  string $otherKey
+     * @param  string $relation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function belongsTo($related, $foreignKey = null, $otherKey = null, $relation = null)
+    {
+        // If no relation name was given, we will use this debug backtrace to extract
+        // the calling method's name and use that as the relationship name as most
+        // of the time this will be what we desire to use for the relatinoships.
+        if (is_null($relation)) {
+            list(, $caller, $backtrace) = debug_backtrace(false);
+
+            if ($backtrace['function'] == 'callRelationships') {
+                $relation = $backtrace['args'][0];
+            }
+            else {
+                $relation = $caller['function'];
+            }
+        }
+
+        // If no foreign key was supplied, we can use a backtrace to guess the proper
+        // foreign key name by using the name of the relationship function, which
+        // when combined with an "_id" should conventionally match the columns.
+        if (is_null($foreignKey)) {
+            $foreignKey = snake_case($relation) . '_id';
+        }
+
+        $instance = new $related;
+
+        // Once we have the foreign key names, we'll just create a new Eloquent query
+        // for the related models and returns the relationship instance which will
+        // actually be responsible for retrieving and hydrating every relations.
+        $query = $instance->newQuery();
+
+        $otherKey = $otherKey ? : $instance->getKeyName();
+
+        return new BelongsTo($query, $this, $foreignKey, $otherKey, $relation);
+    }
+
+    /**
+     * Define an polymorphic, inverse one-to-one or many relationship.
+     *
+     * @param  string $name
+     * @param  string $type
+     * @param  string $id
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function morphTo($name = null, $type = null, $id = null)
+    {
+        // If no name is provided, we will use the backtrace to get the function name
+        // since that is most likely the name of the polymorphic interface. We can
+        // use that to get both the class and foreign key that will be utilized.
+        if (is_null($name)) {
+            list(, $caller, $backtrace) = debug_backtrace(false);
+
+            if ($backtrace['function'] == 'callRelationships') {
+                // If called using Magniloquent $relationships, we need to go back
+                // one extra callback in the backtrace
+                $name = snake_case($backtrace['args'][0]);
+            }
+            else {
+                $name = snake_case($caller['function']);
+            }
+        }
+
+        // Next we will guess the type and ID if necessary. The type and IDs may also
+        // be passed into the function so that the developers may manually specify
+        // them on the relations. Otherwise, we will just make a great estimate.
+        list($type, $id) = $this->getMorphs($name, $type, $id);
+
+        $class = $this->$type;
+
+        return $this->belongsTo($class, $id);
     }
 
     /**
