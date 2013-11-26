@@ -75,6 +75,23 @@ class Athlete extends Magniloquent {
 }
 ```
 
+##Custom Purging
+Magniloquent will automatically purge any attributes that start with an underscore `_` or end with `_confirmation`.  If you want to purge additional fields, add a `protected static $purgeable` array whose keys are the attributes to purge. Below is an example:
+
+```php
+class Account extends Magniloquent {
+
+    protected static $purgeable = ['ssn'];
+
+}
+```
+
+Anytime this model is saved, the `$ssn` attribute will be removed from the object before it is saved.  This allows you to run code the code below without worrying about inserting unnecessary data into the database.
+
+```php
+$account->save(Input::all());
+```
+
 ##Controller Example
 Here is an example `store` method:
 
