@@ -6,7 +6,14 @@
     "authors": [
         {
             "name": "Philip Brown",
-            "email": "phil@ipbrown.com"
+            "email": "phil@ipbrown.com",
+            "role": "Creator/Developer"
+        },
+        {
+            "name": "Alex Sears",
+            "email": "alexwsears@gmail.com",
+            "homepage": "http://alexsears.com",
+            "role": "Developer"
         }
     ],
     "require": {
