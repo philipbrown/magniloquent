@@ -19,6 +19,11 @@ class Magniloquent extends Model {
     );
 
     /**
+     * @var array The attributes to purge before saving
+     */
+    protected static $purgeable = array();
+
+    /**
      * @var array The relationships this model has to other models
      */
     protected static $relationships = array();
@@ -336,7 +341,7 @@ class Magniloquent extends Model {
     {
         $clean = array();
         foreach ($this->attributes as $key => $value) {
-            if (! Str::endsWith($key, '_confirmation') && ! Str::startsWith($key, '_'))
+            if (! Str::endsWith($key, '_confirmation') && ! Str::startsWith($key, '_') && ! in_array($key, static::$purgeable))
                 $clean[$key] = $value;
         }
         $this->attributes = $clean;
