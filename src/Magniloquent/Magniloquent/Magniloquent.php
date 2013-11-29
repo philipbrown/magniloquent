@@ -104,14 +104,20 @@ class Magniloquent extends Model {
      *
      * @param array $new_attributes New attributes to fill onto the model before saving
      * @param bool  $forceSave      Whether to validate or not. Defaults to validating before saving
-     * @param bool  $touch          The option to touch timestamps with all parent models
      *
      * @return bool
      */
-    public function save(array $new_attributes = array(), $forceSave = false, $touch = true)
+    public function save(array $new_attributes = array(), $forceSave = false)
     {
-        if (! empty($new_attributes))
-            $this->fill($new_attributes);
+        $options = array();
+
+        if (array_key_exists('touch', $new_attributes))
+        {
+            $options['touch'] = $new_attributes['touch'];
+            $new_attributes = array_except($new_attributes, array('touch'));
+        }
+
+        $this->fill($new_attributes);
 
         if (! $forceSave) {
             // If the validation failed, return false
@@ -127,7 +133,7 @@ class Magniloquent extends Model {
 
         $this->saved = true;
 
-        return parent::save(array('touch' => $touch));
+        return parent::save($options);
     }
 
     /**
