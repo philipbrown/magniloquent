@@ -90,7 +90,8 @@ class Magniloquent extends Model {
      */
     public function __get($key)
     {
-        if (array_key_exists($key, static::$relationships)) {
+        if (array_key_exists($key, static::$relationships))
+        {
             $relation = $this->callRelationships($key);
 
             return $relation->getResults();
@@ -119,7 +120,8 @@ class Magniloquent extends Model {
 
         $this->fill($new_attributes);
 
-        if (! $forceSave) {
+        if (! $forceSave)
+        {
             // If the validation failed, return false
             if (! $this->valid && ! $this->validate())
                 return false;
@@ -151,13 +153,16 @@ class Magniloquent extends Model {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
         // of the time this will be what we desire to use for the relatinoships.
-        if (is_null($relation)) {
+        if (is_null($relation))
+        {
             list(, $caller, $backtrace) = debug_backtrace(false);
 
-            if ($backtrace['function'] == 'callRelationships') {
+            if ($backtrace['function'] == 'callRelationships')
+            {
                 $relation = $backtrace['args'][0];
             }
-            else {
+            else
+            {
                 $relation = $caller['function'];
             }
         }
@@ -165,7 +170,8 @@ class Magniloquent extends Model {
         // If no foreign key was supplied, we can use a backtrace to guess the proper
         // foreign key name by using the name of the relationship function, which
         // when combined with an "_id" should conventionally match the columns.
-        if (is_null($foreignKey)) {
+        if (is_null($foreignKey))
+        {
             $foreignKey = snake_case($relation) . '_id';
         }
 
@@ -195,15 +201,18 @@ class Magniloquent extends Model {
         // If no name is provided, we will use the backtrace to get the function name
         // since that is most likely the name of the polymorphic interface. We can
         // use that to get both the class and foreign key that will be utilized.
-        if (is_null($name)) {
+        if (is_null($name))
+        {
             list(, $caller, $backtrace) = debug_backtrace(false);
 
-            if ($backtrace['function'] == 'callRelationships') {
+            if ($backtrace['function'] == 'callRelationships')
+            {
                 // If called using Magniloquent $relationships, we need to go back
                 // one extra callback in the backtrace
                 $name = snake_case($backtrace['args'][0]);
             }
-            else {
+            else
+            {
                 $name = snake_case($caller['function']);
             }
         }
@@ -247,7 +256,8 @@ class Magniloquent extends Model {
 
         $validation = Validator::make($this->attributes, $this->mergedRules, $this->customMessages);
 
-        if ($validation->passes()) {
+        if ($validation->passes())
+        {
             $this->valid = true;
 
             return true;
@@ -295,8 +305,8 @@ class Magniloquent extends Model {
      * array('hasMany', 'model', 'foreignKey')
      * array('belongsTo', 'model', 'foreignKey')
      * array('belongsToMany', 'model', 'table_name', 'this_id', 'other_id')
-     *
-     * TODO: Add polymorphic relations
+     * array('morphTo')
+     * array('morphMany', 'model', 'relation_name')
      *
      * @param $method
      *
@@ -327,7 +337,8 @@ class Magniloquent extends Model {
         else
             $merged = array_merge_recursive($rules['save'], $rules['create']);
 
-        foreach ($merged as $field => $rules) {
+        foreach ($merged as $field => $rules)
+        {
             if (is_array($rules))
                 $output[$field] = implode("|", $rules);
             else
@@ -346,7 +357,8 @@ class Magniloquent extends Model {
     private function purgeUnneeded()
     {
         $clean = array();
-        foreach ($this->attributes as $key => $value) {
+        foreach ($this->attributes as $key => $value)
+        {
             if (! Str::endsWith($key, '_confirmation') && ! Str::startsWith($key, '_') && ! in_array($key, static::$purgeable))
                 $clean[$key] = $value;
         }
@@ -360,7 +372,8 @@ class Magniloquent extends Model {
      */
     private function autoHash()
     {
-        if (isset($this->attributes['password'])) {
+        if (isset($this->attributes['password']))
+        {
             if ($this->attributes['password'] != $this->getOriginal('password'))
                 $this->attributes['password'] = Hash::make($this->attributes['password']);
         }
