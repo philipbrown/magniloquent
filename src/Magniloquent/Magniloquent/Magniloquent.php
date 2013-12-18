@@ -237,7 +237,7 @@ class Magniloquent extends Model {
      */
     public function setAttribute($key, $value)
     {
-        if ($this->valid)
+        if ($this->valid && $key != $this->getKeyName() && ! in_array($key, $this->getDates()))
             $this->valid = false;
 
         return parent::setAttribute($key, $value);
