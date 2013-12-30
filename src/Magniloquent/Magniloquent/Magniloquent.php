@@ -92,6 +92,13 @@ class Magniloquent extends Model {
     {
         if (array_key_exists($key, static::$relationships))
         {
+            // If the relation is already loaded, just return it, 
+            // otherwise it will query the relation twice.
+            if (array_key_exists($key, $this->relations))
+            {
+                return $this->relations[$key];
+            }
+            
             $relation = $this->callRelationships($key);
 
             return $relation->getResults();
