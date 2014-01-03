@@ -98,10 +98,10 @@ class Magniloquent extends Model {
             {
                 return $this->relations[$key];
             }
-            
+
             $relation = $this->callRelationships($key);
 
-            return $relation->getResults();
+            return $this->relations[$key] = $relation->getResults();
         }
 
         return parent::__get($key);
