@@ -391,12 +391,14 @@ class Magniloquent extends Model {
     /**
      * Replace the :ignore_id: for unique fields updates
      *
+     * @param array $rules
+     *
      * @return array
      */
-    private function replaceIgnoreId($rules)
+    private function replaceIgnoreId(array $rules)
     {
         foreach ($rules as &$rule) {
-            foreach (explode('|',$rule) as &$subrule) {
+            foreach ($rule = explode('|',$rule) as &$subrule) {
                 if (substr($subrule, 0, 6) == 'unique' && strpos($subrule, ':ignore_id:') !== FALSE) {
                     $splitted_subrule = explode(',', $subrule);
                     if (count($splitted_subrule) > 3)
@@ -406,6 +408,7 @@ class Magniloquent extends Model {
                     $subrule = implode(',',$splitted_subrule);
                 }
             }
+            $rule = implode('|', $rule);
         }
 
         return $rules;
