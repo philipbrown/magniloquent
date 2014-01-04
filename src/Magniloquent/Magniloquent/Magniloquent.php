@@ -393,7 +393,7 @@ class Magniloquent extends Model {
      *
      * @return array
      */
-    private function replaceIgnoreId()
+    private function replaceIgnoreId($rules)
     {
         foreach ($rules as &$rule) {
             foreach (explode('|',$rule) as &$subrule) {
