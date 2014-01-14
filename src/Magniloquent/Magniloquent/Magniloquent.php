@@ -339,10 +339,12 @@ class Magniloquent extends Model {
         $rules = static::$rules;
         $output = array();
 
-        if ($this->exists)
-            $merged = array_merge_recursive($rules['save'], $rules['update']);
-        else
+        if ($this->exists) {
+            $updateRules = $this->replaceIgnoreId($rules['update']);
+            $merged = array_merge_recursive($rules['save'], $updateRules);
+        } else {
             $merged = array_merge_recursive($rules['save'], $rules['create']);
+        }
 
         foreach ($merged as $field => $rules)
         {
@@ -384,6 +386,32 @@ class Magniloquent extends Model {
             if ($this->attributes['password'] != $this->getOriginal('password'))
                 $this->attributes['password'] = Hash::make($this->attributes['password']);
         }
+    }
+
+    /**
+     * Replace the :ignore_id: for unique fields updates
+     *
+     * @param array $rules
+     *
+     * @return array
+     */
+    private function replaceIgnoreId(array $rules)
+    {
+        foreach ($rules as &$rule) {
+            foreach ($rule = explode('|',$rule) as &$subrule) {
+                if (substr($subrule, 0, 6) == 'unique' && strpos($subrule, ':ignore_id:') !== FALSE) {
+                    $splitted_subrule = explode(',', $subrule);
+                    if (count($splitted_subrule) > 3)
+                        $splitted_subrule[2] = $this->$splitted_subrule[3];
+                    else
+                        $splitted_subrule[2] = $this->id;
+                    $subrule = implode(',',$splitted_subrule);
+                }
+            }
+            $rule = implode('|', $rule);
+        }
+
+        return $rules;
     }
 
 }
