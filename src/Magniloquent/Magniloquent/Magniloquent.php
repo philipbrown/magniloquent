@@ -261,7 +261,7 @@ class Magniloquent extends Model {
         // Merge the rules arrays into one array
         $this->mergeRules();
 
-        $validation = Validator::make($this->attributes, $this->mergedRules, $this->customMessages);
+        $validation = Validator::make(parent::getDirty(), $this->mergedRules, $this->customMessages);
 
         if ($validation->passes())
         {
