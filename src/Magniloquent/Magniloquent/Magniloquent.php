@@ -92,7 +92,7 @@ class Magniloquent extends Model {
     {
         if (array_key_exists($key, static::$relationships))
         {
-            // If the relation is already loaded, just return it, 
+            // If the relation is already loaded, just return it,
             // otherwise it will query the relation twice.
             if (array_key_exists($key, $this->relations))
             {
@@ -262,6 +262,9 @@ class Magniloquent extends Model {
         $this->mergeRules();
 
         $validation = Validator::make($this->attributes, $this->mergedRules, $this->customMessages);
+
+        // Sets the connection, based on the model's connection variable.
+        $validation->getPresenceVerifier()->setConnection($this->connection);
 
         if ($validation->passes())
         {
