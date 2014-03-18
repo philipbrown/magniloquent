@@ -92,7 +92,7 @@ class Magniloquent extends Model {
     {
         if (array_key_exists($key, static::$relationships))
         {
-            // If the relation is already loaded, just return it, 
+            // If the relation is already loaded, just return it,
             // otherwise it will query the relation twice.
             if (array_key_exists($key, $this->relations))
             {
@@ -334,7 +334,7 @@ class Magniloquent extends Model {
      *
      * @return array
      */
-    private function mergeRules()
+    protected function mergeRules()
     {
         $rules = static::$rules;
         $output = array();
