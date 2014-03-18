@@ -422,17 +422,25 @@ class Magniloquent extends Model {
                  $rule_params = explode(',', $temp_rule[$rule_key]);
                  // Get number of params
                  $count = count($rule_params);
-                 // if user only supplied table
-                 if ($count == 1)
+                 if ($count < 3)
                  {
-                     // add field to array to be added to string
-                     $rule_params[] = $index;
+                     switch ($count)
+                     {
+                        case 1:
+                            // add field to array to be added to string
+                            $rule_params[] = $index;
+                            // allow fall-through to append additional parameters
+                        case 2:
+                            // add model id number to end to make sure it's ignored
+                            $rule_params[] = $this->getKey();
+                            // add model primary key field name
+                            $rule_params[] = $this->getKeyName();
+                            break;
+                     }
+                     // put everything back together
+                     $temp_rule = implode(',', $rule_params);
+                     $this->mergedRules[$index] = $temp_rule;
                  }
-                 // add model id number to end to make sure it's ignored
-                 $rule_params[] = $this->getKey();
-                 // put everything back together
-                 $temp_rule = implode(',', $rule_params);
-                 $this->mergedRules[$index] = $temp_rule;
              }
          }
      }
