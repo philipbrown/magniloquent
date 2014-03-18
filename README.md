@@ -60,6 +60,8 @@ The `save` array are validation rules that are applicable whenever the model is 
 
 So in the example above, when a user is created, the username should be unique. When the user updates any of their information, the uniqueness validation test won't be applied.
 
+Note: Magniloquent is able to correctly ignore the current object when validatings unique values.
+
 ##Easier Relationships
 Defining relationships in Laravel can take up a ton of room in a model.  This can make reading and maintaining your models much more difficult.  Luckily, Magniloquent makes defining relationships a cinch.  Add a `$relationships` multi-dimensional array to your model.  Inside it, define the name of the relationship that will be called as the key and the value to be an array of parameters.  The first parameter is the type of relationship.  The rest are the parameters to be passed to that function.  Below is an example:
 
