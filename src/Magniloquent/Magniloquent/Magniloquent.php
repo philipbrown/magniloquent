@@ -261,6 +261,12 @@ class Magniloquent extends Model {
         // Merge the rules arrays into one array
         $this->mergeRules();
 
+        // Exclude this object from unique checks if object exists
+        if ($this->exists)
+        {
+            $this->excludeFromUniqueChecks();
+        }
+
         $validation = Validator::make($this->attributes, $this->mergedRules, $this->customMessages);
 
         // Sets the connection, based on the model's connection variable.
@@ -388,5 +394,47 @@ class Magniloquent extends Model {
                 $this->attributes['password'] = Hash::make($this->attributes['password']);
         }
     }
+
+    /**
+     *
+     */
+     private function excludeFromUniqueChecks()
+     {
+         // iterate over each field
+         foreach ($this->mergedRules as $index => $rule)
+         {
+             // if there is a unique rule in for that field
+             if (false !== strpos($rule, 'unique:'))
+             {
+                 // split rule on pipes
+                 $temp_rule = explode('|', $rule);
+                 // find key of unique rule
+                 $rule_key = '';
+                 foreach ($temp_rule as $temp_key => $value)
+                 {
+                     if (false !== strpos($value, 'unique:'))
+                     {
+                         $rule_key = $temp_key;
+                         break;
+                     }
+                 }
+                 // separate rule params by comma
+                 $rule_params = explode(',', $temp_rule[$rule_key]);
+                 // Get number of params
+                 $count = count($rule_params);
+                 // if user only supplied table
+                 if ($count == 1)
+                 {
+                     // add field to array to be added to string
+                     $rule_params[] = $index;
+                 }
+                 // add model id number to end to make sure it's ignored
+                 $rule_params[] = $this->getKey();
+                 // put everything back together
+                 $temp_rule = implode(',', $rule_params);
+                 $this->mergedRules[$index] = $temp_rule;
+             }
+         }
+     }
 
 }
