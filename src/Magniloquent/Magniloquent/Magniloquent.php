@@ -263,6 +263,9 @@ class Magniloquent extends Model {
 
         $validation = Validator::make($this->attributes, $this->mergedRules, $this->customMessages);
 
+        // Sets the connection, based on the model's connection variable.
+        $validation->getPresenceVerifier()->setConnection($this->connection);
+
         if ($validation->passes())
         {
             $this->valid = true;
