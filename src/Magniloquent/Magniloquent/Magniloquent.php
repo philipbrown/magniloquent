@@ -54,6 +54,11 @@ class Magniloquent extends Model {
     protected $customMessages = array();
 
     /**
+     * @var array nice attribute names
+     */
+    protected $niceNames = array();
+
+    /**
      * The constructor of the model. Takes optional array of attributes.
      * Also, it sets validationErrors to be an empty MessageBag instance.
      *
@@ -262,6 +267,8 @@ class Magniloquent extends Model {
         $this->mergeRules();
 
         $validation = Validator::make($this->attributes, $this->mergedRules, $this->customMessages);
+
+        $validation->setAttributeNames($this->niceNames);
 
         if ($validation->passes())
         {
