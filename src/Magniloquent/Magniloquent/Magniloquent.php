@@ -438,7 +438,7 @@ class Magniloquent extends Model {
                             break;
                      }
                      // put everything back together
-                     $temp_rule = implode(',', $rule_params);
+                     $temp_rule[$rule_key] = implode(',', $rule_params);
                      $this->mergedRules[$index] = $temp_rule;
                  }
              }
