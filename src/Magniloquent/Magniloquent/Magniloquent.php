@@ -22,6 +22,11 @@ class Magniloquent extends Model {
      * @var array The attributes to purge before saving
      */
     protected static $purgeable = array();
+    
+    /**
+     * @var bool The skip validation attribute
+     */
+    protected static $forceSave = false;
 
     /**
      * @var array The relationships this model has to other models
@@ -120,7 +125,7 @@ class Magniloquent extends Model {
      *
      * @return bool
      */
-    public function save(array $new_attributes = array(), $forceSave = false)
+    public function save(array $new_attributes = array())
     {
         $options = array();
 
@@ -132,7 +137,7 @@ class Magniloquent extends Model {
 
         $this->fill($new_attributes);
 
-        if (! $forceSave)
+        if (! $this->forceSave)
         {
             // If the validation failed, return false
             if (! $this->valid && ! $this->validate())
@@ -302,6 +307,17 @@ class Magniloquent extends Model {
         return $this->validationErrors;
     }
 
+    /**
+     * Allows fluent use of save method 
+     *
+     * @return void
+     */
+    public function force()
+    {
+         $this->forceSave = true;
+         return $this;
+    }
+    
     /**
      * Returns if model has been saved to the database
      *
