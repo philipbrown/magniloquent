@@ -111,7 +111,14 @@ class Magniloquent extends Model {
 
         return parent::__get($key);
     }
-
+    
+    /**
+     * Perform actions before the Model effectively performs the save call.
+     *
+     * @return void
+     */
+    public function beforeSave() {}
+    
     /**
      * Prepare before the Model is actually saved
      *
@@ -131,6 +138,8 @@ class Magniloquent extends Model {
         }
 
         $this->fill($new_attributes);
+        
+        $this->beforeSave();
 
         if (! $forceSave)
         {
