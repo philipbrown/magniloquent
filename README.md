@@ -95,15 +95,21 @@ $account->save(Input::all());
 ```
 
 ##Custom Display Names
-Magniloquent gives you the ability to customize the display name of each of the fields that are under validation.  Just add a `protected $niceNames` array to your model where the keys are the field names and the values are their display names.  Below is an example.
+Magniloquent gives you the ability to customize the display name of each of the fields that are under validation. Just add a niceNames() class method returning an array where the keys are the field names and the values are their display names. Below is an example.
+
 
 ```php
-protected $niceNames = array(
-    'email'     => 'email address'
-);
+protected function niceNames()
+{
+    return array(
+        'email'     => 'email address'
+    );
+}
 ```
 
-Now, anytime there are issues with email validation, the message to the user will say "email address" instead of "email."
+Now, anytime there are issues with email validation, the message to the user will say "email address" instead of "email". Optionally you could also make use of trans() or some custom logic code for returning localized or computed display names.
+
+Note: in older versions this feature was implemented as the $nicenames class property. Legacy support for this is preserved but you are encouraged to use niceNames() in new models.
 
 ##Controller Example
 Here is an example `store` method:
