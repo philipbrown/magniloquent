@@ -413,8 +413,10 @@ class Magniloquent extends Model {
     {
         if (isset($this->attributes['password']))
         {
-            if ($this->attributes['password'] != $this->getOriginal('password'))
+            if ( ! Hash::check($this->attributes['password'], $this->getOriginal('password'))) 
+            {
                 $this->attributes['password'] = Hash::make($this->attributes['password']);
+            }
         }
     }
 
