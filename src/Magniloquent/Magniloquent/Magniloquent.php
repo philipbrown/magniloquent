@@ -416,7 +416,7 @@ class Magniloquent extends Model {
      */
     private function autoHash()
     {
-        $attributes = array_merge(static::$needsHash, ['password']);
+        $attributes = array_merge(static::$needsHash, array('password'));
 
         foreach ($attributes as $name) {
 
