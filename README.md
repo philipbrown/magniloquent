@@ -1,5 +1,6 @@
-Magniloquent
+Magniloquent (DEPRECATED)
 ============
+
 
 Self-validating models for Laravel 4's Eloquent.
 
