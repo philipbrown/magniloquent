@@ -376,10 +376,12 @@ class Magniloquent extends Model {
         $rules = static::$rules;
         $output = array();
 
-        if ($this->exists)
+        if ($this->exists) {
             $merged = array_merge_recursive($rules['save'], $rules['update']);
-        else
+            $merged = str_replace(':ignore_id:', $this->id, $merged);
+        } else {
             $merged = array_merge_recursive($rules['save'], $rules['create']);
+        }
 
         foreach ($merged as $field => $rules)
         {
